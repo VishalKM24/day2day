@@ -7,18 +7,17 @@
 }
 
 .app__header{
-    
+    object-fit: contain;
     background-color: white;
-    padding: 0px;
+    padding: 10px;
     border-bottom: 1px solid lightgray;
-    width: 80px;
+    width: 100%;
     margin: 4px;
     max-height: 70px;
-    display: inline-block;
-    
+    display: inline-block; 
 }
 
-.img {
-    display: block;
-    width: 100%;
+.app__signup {
+    display: flex;
+    flex-direction: column;
 }
