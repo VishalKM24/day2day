@@ -9,15 +9,42 @@
 .app__header{
     object-fit: contain;
     background-color: white;
-    padding: 10px;
+    padding: 5px;
     border-bottom: 1px solid lightgray;
     width: 100%;
     margin: 4px;
     max-height: 70px;
-    display: inline-block; 
+    display: flex;
+    justify-content: space-between;
+    object-fit: contain;
+    
 }
 
-.app__signup {
+.app__headerImage {
+    object-fit: contain;
+}
+
+.app__signUp {
     display: flex;
     flex-direction: column;
 }
+
+.app__posts{
+    padding: 20px;
+    display: flex;
+    
+}
+
+.app__postsLeft{
+    margin-right: 40px;
+}
+  
+.app__postsRight{
+    margin-left: 20px;;
+}
+
+.posts__and__upload {
+    display: flex;
+    flex-direction: row;
+    object-fit: contain;
+}  

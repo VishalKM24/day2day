@@ -4,7 +4,9 @@ import { auth, db } from './firebase';
 import Post from './Posts';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import { Button } from '@material-ui/core';
+import { Button, Link } from '@material-ui/core';
+import ImageUpload from "./ImageUpload";
+import "./components/Navbar.css";
 
 
 function getModalStyle() {
@@ -41,23 +43,28 @@ function App() {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [user, setUser] = useState(null);
+  const [click, setClick] = useState(false);
+
+  const closeMobileMenu=()=> setClick(false);
+
+
+  const handleClick = () => setClick(!click);
+
 
   useEffect(() => {
-    const unsubscribe =  auth.onAuthStateChanged((authUser) => {
-      if(authUser){
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
         // user logged in
         console.log(authUser);
         setUser(authUser);
-        
-        if(authUser.displayName){
+
+        if (authUser.displayName) {
           // don't update username
         } else {
           return authUser.updateProfile({
             displayName: username
-          })
+          });
         }
-
-
       } else {
         // user logged out
         setUser(null);
@@ -70,7 +77,7 @@ function App() {
   }, [user, username]);
 
   useEffect(() => {
-    db.collection('posts').onSnapshot(snapshot => {
+    db.collection('posts').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
       setPosts(snapshot.docs.map(doc => ({
         id: doc.id,
         post: doc.data()
@@ -81,126 +88,177 @@ function App() {
   const signUp = (event) => {
     event.preventDefault();
     auth.createUserWithEmailAndPassword(email, password)
-    .then((authUser) => {
-      return authUser.user.updateProfile({
-        displayName: username
+      .then((authUser) => {
+        return authUser.user.updateProfile({
+          displayName: username
+        })
       })
-    })
-    .catch((error) => alert(error.message))
+      .catch((error) => alert(error.message))
+    setOpen(false);
+  }
+
+  const SignIn = (event) => {
+    event.preventDefault();
+
+    auth.signInWithEmailAndPassword(email, password)
+      .catch((error) => alert(error.message));
+
+    setOpenSignIn(false);
   }
 
   return (
-    <div className="app">
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-      >
+    <>
+      <div className="app">
+        <Modal
+          open={open}
+          onClose={() => setOpen(false)}
+        >
 
-        <div style={modalStyle} className={classes.paper}>
-          <form className="app__signup">
-          <center>
-            <img
-              className="app__headerImage"
-              src="/images/day2day-logo.png"
-              alt=""
-            />
-            </center>
-            <input
-              placeholder="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
+          <div style={modalStyle} className={classes.paper}>
+            <form className="app__signUp">
+              <center>
+                <img
+                  className="app__headerImage"
+                  src="/images/day2day-logo.png"
+                  alt=""
+                />
+              </center>
+              <input
+                placeholder="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
 
-            <input
-              placeholder="email"
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            
-            <input
-              placeholder="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+              <input
+                placeholder="email"
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-            <Button type="submit" onClick={signUp}>Sign Up</Button>
+              <input
+                placeholder="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-          
-          </form>
+              <Button type="submit" onClick={signUp}>Sign Up</Button>
 
+
+            </form>
+
+          </div>
+        </Modal>
+
+        <Modal
+          open={openSignIn}
+          onClose={() => setOpenSignIn(false)}
+        >
+
+          <div style={modalStyle} className={classes.paper}>
+            <form className="app__signUp">
+              <center>
+                <img
+                  className="app__headerImage"
+                  src="/images/day2day-logo.png"
+                  alt=""
+                />
+              </center>
+              <input
+                placeholder="email"
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              <input
+                placeholder="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <Button type="submit" onClick={SignIn}>Sign In</Button>
+
+
+            </form>
+
+          </div>
+        </Modal>
+
+        <nav className="navbar">
+          <div className="navbar-container">
+
+
+            <Link className="navbar-logo">
+              <img
+                className="app__headerImage"
+                src="/images/day2day-logo.png"
+                alt=""
+              />
+            </Link>
+            <div className="menu-icon" onClick={handleClick}>
+              <i class={click ? "fas fa-times" : "fas fa-bars"} />
+            </div>
+            <ul className={click ? "nav-menu active" : "nav-menu"}>
+              <li className="nav-item">
+                {user ? (
+                  <li className="nav-item">
+                    <Link className='nav-links' onClick={closeMobileMenu}>Logout</Link>
+                  </li>
+                ) : (
+                  <>
+                    <li>
+                      <li className="nav-item">
+                        <Link className='nav-links' onClick={() => setOpenSignIn(true)}>Sign In</Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link className='nav-links' onClick={() => setOpen(true)}>Sign Up</Link>
+                      </li>
+                    </li>
+                  </>
+                )}
+              </li>
+            </ul>
+
+          </div>
+        </nav>
+
+        <div className="posts__and__upload">
+          <div>
+
+            <div className="app__posts" >
+              <div className="app_postsLeft">
+                <h1>Welcome to Day2Day</h1>
+                {
+                  posts.map(({ id, post }) => (
+                    <Post
+                      key={id}
+                      username={post.username}
+                      caption={post.caption}
+                      imageUrl={post.imageUrl} />
+                  ))
+                }
+              </div>
+
+            </div>
+          </div>
+
+          <div>
+
+            {user?.displayName ? (
+              <ImageUpload username={user.displayName} />
+            ) : (
+              <h3>Sorry need to login to Upload</h3>
+            )}
+
+          </div>
         </div>
-      </Modal>
-
-      <Modal
-        open={openSignIn}
-        onClose={() => setOpenSignIn(false)}
-      >
-
-        <div style={modalStyle} className={classes.paper}>
-          <form className="app__signup">
-          <center>
-            <img
-              className="app__headerImage"
-              src="/images/day2day-logo.png"
-              alt=""
-            />
-            </center>
-            <input
-              placeholder="email"
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            
-            <input
-              placeholder="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <Button type="submit" onClick={signUp}>Login</Button>
-
-          
-          </form>
-
-        </div>
-      </Modal>
-
-      <div className="app__header">
-        
-          <img
-            className="app__headerImage"
-            src="/images/day2day-logo.png"
-            alt=""
-          />
 
       </div>
-
-      {user ? (
-          <Button onClick={() => auth.signOut()}>Logout</Button>
-        ) : (
-          <div className="app__loginContainer">
-            <Button onClick={() => setOpenSignIn(true)}>Login</Button>
-          <Button onClick={() => setOpen(true)}>Sign Up</Button>
-          
-          </div>
-        )}
-
-        
-
-      <h1>Welcome to Day2Day</h1>
-
-      {
-        posts.map(({ id, post }) => (
-          <Post username={post.username} caption={post.caption} imageUrl={post.imageUrl} />
-        ))
-      }
-
-    </div>
+    </>
   );
 }
 
