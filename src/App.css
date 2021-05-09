@@ -7,6 +7,7 @@
     background-color: #fafafa;
 }
 
+/*
 .app__header{
     object-fit: contain;
     background-color: white;
@@ -20,7 +21,7 @@
     object-fit: contain;
     
 }
-
+*/
 .app__headerImage {
     object-fit: contain;
 }

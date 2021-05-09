@@ -35,6 +35,7 @@ function App() {
   const classes = useStyles();
 
   const [modalStyle] = React.useState(getModalStyle);
+  
   const [posts, setPosts] = useState([]);
   const [open, setOpen] = useState(false);
   const [openSignIn, setOpenSignIn] = useState(false);
@@ -46,9 +47,6 @@ function App() {
   const [click, setClick] = useState(false);
 
   const closeMobileMenu = () => setClick(false);
-
-
-  const handleClick = () => setClick(!click);
 
 
   useEffect(() => {
@@ -194,7 +192,7 @@ function App() {
 
             <Link className="navbar-logo">
               <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-                width="425.000000pt" height="425.000000pt" viewBox="0 0 1500.000000 1500.000000"
+                width="300.000000pt" height="300.000000pt" viewBox="0 0 1500.000000 1500.000000"
                 preserveAspectRatio="xMidYMid meet">
 
                 <g transform="translate(0.000000,1500.000000) scale(0.100000,-0.100000)"
@@ -263,26 +261,20 @@ m1061 -778 c9 -18 6 -27 -19 -58 -82 -101 -198 -146 -179 -68 7 24 151 147
                 </g>
               </svg>
             </Link>
-            <div className="menu-icon" onClick={handleClick}>
-              <i class={click ? "fas fa-times" : "fas fa-bars"} />
-            </div>
             <ul className={click ? "nav-menu active" : "nav-menu"}>
               <li>
                 {user ? (
                   <li className="nav-item">
-                    <Link className='nav-links' onClick={() => auth.signOut()}>LOG OUT</Link>
+                    <Button className='nav-links' onClick={() => auth.signOut()}>LOG OUT</Button>
                   </li>
                 ) : (
-                  <>
-                    <li>
+                  
+                    
                       <li className="nav-item">
-                        <Link className='nav-links' onClick={() => setOpenSignIn(true)}>SIGN IN</Link>
+                        <Button className='nav-links' onClick={() => setOpenSignIn(true)}>SIGN IN</Button>
+                        <Button className='nav-links' onClick={() => setOpen(true)}>SIGN UP</Button>
                       </li>
-                      <li className="nav-item">
-                        <Link className='nav-links' onClick={() => setOpen(true)}>SIGN UP</Link>
-                      </li>
-                    </li>
-                  </>
+                      
                 )}
               </li>
             </ul>
